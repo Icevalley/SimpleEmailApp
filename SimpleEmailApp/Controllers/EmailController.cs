@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
+using SimpleEmailApp.Models;
 
 namespace SimpleEmailApp.Controllers
 {
@@ -12,22 +13,18 @@ namespace SimpleEmailApp.Controllers
     [Route("api/[controller]")]
     public class EmailController : ControllerBase
     {
-          [HttpPost]
-          public IActionResult SendEmail(string body)
-          {
-            var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse("wava.mccullough70@ethereal.email"));
-            email.To.Add(MailboxAddress.Parse("wava.mccullough70@ethereal.email"));
-            email.Subject = "Test Email Subject";
-            email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+        private readonly IEmailService _emailservice;
 
-            using var smtp = new SmtpClient();
-            smtp.Connect("smtp.ethereal.email", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            smtp.Authenticate("wava.mccullough70@ethereal.email", "UYUhZPpqzdww7P9QGR");
-            smtp.Send(email);
-            smtp.Disconnect(true);
+        public EmailController(IEmailService emailservice)
+        {
+            _emailservice = emailservice;
+        }
+        [HttpPost]
+        public IActionResult SendEmail(EmailDto request)
+        {
+            _emailservice.SendEmail(request);
 
             return Ok();
-          }  
+        }
     }
 }

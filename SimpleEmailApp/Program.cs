@@ -1,4 +1,5 @@
 global using SimpleEmailApp.EmailService;
+global using SimpleEmailApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
